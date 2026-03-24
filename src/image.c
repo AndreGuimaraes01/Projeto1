@@ -82,3 +82,30 @@ SDL_Surface *image_converter_cinza(SDL_Surface *surface) {
 void image_destruir(SDL_Surface *surface) {
     if (surface) SDL_DestroySurface(surface);
 }
+
+Histograma image_calcular_histograma(SDL_Surface *surface) {
+    Histograma h = {0};
+    Uint8 *pixels = (Uint8 *)surface->pixels;
+    int total_pixels = surface->w * surface->h;
+
+    // 1. Contagem de frequências
+    for (int i = 0; i < total_pixels * 3; i += 3) {
+        Uint8 tom = pixels[i]; // Como é cinza, R=G=B
+        h.valores[tom]++;
+        if (h.valores[tom] > h.max_frequencia) h.max_frequencia = h.valores[tom];
+    }
+
+    // 2. Média (Intensidade)
+    float soma = 0;
+    for (int i = 0; i < 256; i++) soma += i * h.valores[i];
+    h.media = soma / total_pixels;
+
+    // 3. Desvio Padrão (Contraste)
+    float soma_variancia = 0;
+    for (int i = 0; i < 256; i++) {
+        soma_variancia += h.valores[i] * (i - h.media) * (i - h.media);
+    }
+    h.desvio_padrao = sqrtf(soma_variancia / total_pixels);
+
+    return h;
+}
