@@ -18,4 +18,14 @@ SDL_Surface *image_converter_cinza(SDL_Surface *surface);
 /* Libera a surface da memória */
 void image_destruir(SDL_Surface *surface);
 
+typedef struct {
+    int valores[256];      // Frequência de cada nível (0-255)
+    int max_frequencia;    // Para escalar o gráfico na janela
+    float media;           // Média de intensidade
+    float desvio_padrao;   // Para calcular o contraste
+} Histograma;
+
+/* Calcula o histograma e estatísticas de uma surface em cinza */
+Histograma image_calcular_histograma(SDL_Surface *surface);
+
 #endif
